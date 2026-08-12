@@ -19,13 +19,18 @@ Prisma 6 · Supabase (Postgres + Auth + Storage) · Vercel
 
 All variables are documented with comments in `.env.example`. Summary:
 
-| Variable | Where to get it |
-|---|---|
-| `DATABASE_URL` | Supabase project → Settings → Database → Connection string (**pooled**, port 6543) |
-| `DIRECT_URL` | Same page → Connection string (**direct**, port 5432) — used only for migrations |
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project → Settings → API |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase project → Settings → API |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase project → Settings → API — **secret**, server-only, not used until Step 3 |
+| Variable | Exposure | Where to get it |
+|---|---|---|
+| `DATABASE_URL` | SERVER ONLY / SECRET | Supabase → Settings → Database → Connection string (**pooled**, port 6543, `?pgbouncer=true`) |
+| `DIRECT_URL` | SERVER ONLY / SECRET | Same page → Connection string (**direct**, port 5432) — used only when running migrations |
+| `NEXT_PUBLIC_SUPABASE_URL` | SAFE FOR CLIENT / PUBLIC | Supabase → Settings → API Keys |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | SAFE FOR CLIENT / PUBLIC | Supabase → Settings → API Keys — the current `sb_publishable_...` key (replaces the legacy `anon` key) |
+| `SUPABASE_SECRET_KEY` | SERVER ONLY / SECRET | Supabase → Settings → API Keys — the current `sb_secret_...` key (replaces the legacy `service_role` key). Not used until Step 3. |
+| `NEXT_TELEMETRY_DISABLED` | build-time flag, not sensitive | set to `1` |
+
+This project uses Supabase's current **publishable/secret** API key pair,
+not the legacy `anon`/`service_role` JWT keys — same privilege model
+(publishable stays subject to RLS, secret bypasses it), current naming.
 
 Never commit `.env.local`. Never prefix a secret with `NEXT_PUBLIC_` —
 that exposes it to the browser.
